@@ -145,12 +145,62 @@
           return null;
         }
       },
+    },
+    Browser: {
+      version: (_ua.match(/.+(?:me|ox|on|rv|it|era|opr|ie)[\/: ]([\d.]+)/) || [0, '0'])[1],
+      opera: (/opera/i.test(_ua) || /opr/i.test(_ua)),
+      vivaldi: /vivaldi/i.test(_ua),
+      msie: (/msie/i.test(_ua) && !/opera/i.test(_ua) || /trident\//i.test(_ua)) || /edge/i.test(_ua),
+      msie6: (/msie 6/i.test(_ua) && !/opera/i.test(_ua)),
+      msie7: (/msie 7/i.test(_ua) && !/opera/i.test(_ua)),
+      msie8: (/msie 8/i.test(_ua) && !/opera/i.test(_ua)),
+      msie9: (/msie 9/i.test(_ua) && !/opera/i.test(_ua)),
+      msie_edge: (/edge/i.test(_ua) && !/opera/i.test(_ua)),
+      mozilla: /firefox/i.test(_ua),
+      chrome: /chrome/i.test(_ua) && !/edge/i.test(_ua),
+      safari: (!(/chrome/i.test(_ua)) && /webkit|safari|khtml/i.test(_ua)),
+      iphone: /iphone/i.test(_ua),
+      ipod: /ipod/i.test(_ua),
+      iphone4: /iphone.*OS 4/i.test(_ua),
+      ipod4: /ipod.*OS 4/i.test(_ua),
+      ipad: /ipad/i.test(_ua),
+      android: /android/i.test(_ua),
+      bada: /bada/i.test(_ua),
+      mobile: /iphone|ipod|ipad|opera mini|opera mobi|iemobile|android/i.test(_ua),
+      msie_mobile: /iemobile/i.test(_ua),
+      safari_mobile: /iphone|ipod|ipad/i.test(_ua),
+      opera_mobile: /opera mini|opera mobi/i.test(_ua),
+      opera_mini: /opera mini/i.test(_ua),
+      mac: /mac/i.test(_ua),
+      search_bot: /(yandex|google|stackrambler|aport|slurp|msnbot|bingbot|twitterbot|ia_archiver|facebookexternalhit)/i.test(_ua)
     }
   };
 
   spTools.DOM = {
-    getNode: function(selector) {
-      return document.querySelector(selector);
+    getNode: function(el, scope) {
+      let scopeNode = (scope && typeof scope == 'object' ? scope : document);
+      return (typeof el === 'string' || typeof el === 'number') ? scopeNode.querySelector(el) : el;
+    },
+
+    getNodeById: function(el) {
+      return (typeof el === 'string' || typeof el === 'number') ? document.getElementById(el) : el;
+    },
+
+    getDocumentRoot: function() {
+      return document.documentElement;
+    },
+
+    isDocumentLoaded: function(extendedAnswer) {
+      if(document.readyState) {
+        switch(document.readyState) {
+          case 'loading':
+            return false;
+          case 'interactive':
+            return (extendedAnswer ? true : false);
+          case 'complete':
+            return (extendedAnswer ? 2 : true);
+        }
+      }
     },
 
     hasClass: function(el, className) {
@@ -357,6 +407,17 @@
     isLonger: function(inputString, inputLength) {
       return (inputString && inputString.length && inputString.length >= inputLength) ? true : false;
     },
+
+    parseJSON: function(obj) {
+      return (window.JSON && JSON.parse) ? function (obj) {
+        try { return JSON.parse(obj); } catch (e) {
+          topError('<b>parseJSON:</b> ' + e.message, {dt: -1, type: 5, answer: obj});
+          return eval('('+obj+')');
+        }
+      } : function(obj) {
+        return eval('('+obj+')');
+      }
+    }
   };
 
   /*** Registry ***/
@@ -429,7 +490,7 @@
   /*** Debugger ***/
   spTools.Debugger = {
 
-    dumpComponent: function(component) {
+    dumpComponent: (component) => {
       if(component.constructor.name !== "Tag") {
         console.error('dump failed: not a proper component:', component);
         return;
@@ -439,8 +500,25 @@
           ' * Children: ', this.tags,
           ' * Root', this.root,
           ' * Options, params & state:', this.opts, this.params, this.state);
-    }
-  };
+    },
+
+    topMsg: (text, seconds, color) => {
+      if (!color) color = '#D6E5F7';
+      if (!text) {
+        hide('system_msg');
+      } else {
+        clearTimeout(window.topMsgTimer);
+        var el = ge('system_msg');
+        el.style.backgroundColor = color;
+        el.innerHTML = text;
+        show(el);
+        if (seconds) {
+          window.topMsgTimer = setTimeout(topMsg.pbind(false), seconds * 1000);
+        }
+      }
+  }
+
+};
 
   spTools.Emitter.emit('__core_init');
 
