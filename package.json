@@ -1,0 +1,27 @@
+{
+  "name": "sp-tools",
+  "version": "0.9.0",
+  "description": "Set of frontend tools (one more framework)",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitalhitler/sp-tools.git"
+  },
+  "keywords": [
+    "framework",
+    "sergey",
+    "petrenko",
+    "getrix",
+    "tools",
+    "sp-tools"
+  ],
+  "author": "Sergey Petrenko <spetrenko@me.com>",
+  "license": "CC-BY-4.0",
+  "bugs": {
+    "url": "https://github.com/digitalhitler/sp-tools/issues"
+  },
+  "homepage": "https://github.com/digitalhitler/sp-tools#readme"
+}
