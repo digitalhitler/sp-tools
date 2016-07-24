@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.1
+
+__24 Jul 2016__
+
+* Globalization issue fixed.
+* `playground.js` introduced.
+
+
 ## 0.9.0
 
 __24 Jul 2016__

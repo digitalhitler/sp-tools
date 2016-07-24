@@ -1,6 +1,6 @@
 {
   "name": "sp-tools",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Set of frontend tools (one more framework)",
   "main": "src/index.js",
   "scripts": {

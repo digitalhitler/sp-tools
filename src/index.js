@@ -1,7 +1,7 @@
 /******************************************************************************
  * @project sp-tools                                                          *
  * @description Set of tools for easily life inside of browser                *
- * @version 0.9.0                                                             *
+ * @version 0.9.1                                                             *
  * @repository https://github.com/digitalhitler/sp-tools                      *
  *                                                                            *
  * @author Sergey Petrenko <spetrenko@me.com>                                 *
@@ -23,13 +23,13 @@
 
 (function (exports) {
 
-  const TOOLS_VERSION = "0.9.0";
+  const TOOLS_VERSION = "0.9.1";
 
   const EventEmitter = require('./EventEmitter');
 
   if(typeof spTools === 'undefined') {
     var spTools = {
-      __spToolsVersion: TOOLS_VERSION
+      __spToolsVersion: TOOLS_VERSION,
       __data: {}
     };
   }
@@ -40,7 +40,7 @@
 
   spTools.Globalize = () => {
     let globalScope = (typeof window !== 'undefined' ? window : global);
-    if(!globalScope.SP || !globalScope.SP.__spToolsVersion) {
+    if(!globalScope.SP || !globalScope.spTools.__spToolsVersion) {
       globalScope.SP = spTools;
       globalScope.SP.__spToolsGlobalized = true;
     }
@@ -63,7 +63,7 @@
   spTools.Initializer = {
     add: function(callback) {
       if(callback && typeof callback === "function") {
-        SP.Emitter.once('__core_init', callback);
+        spTools.Emitter.once('__core_init', callback);
       } else return false;
     }
   };
@@ -161,10 +161,10 @@
     },
 
     deleteClass: function(el, className) {
-      el = SP.DOM.normalizeElement(el);
+      el = spTools.DOM.normalizeElement(el);
       if(el && className) {
-        if(SP.DOM.hasClass(el, className)) {
-          SP.DOM.toggleClass(el, className);
+        if(spTools.DOM.hasClass(el, className)) {
+          spTools.DOM.toggleClass(el, className);
           return true;
         } else {
           return null;
@@ -176,9 +176,9 @@
 
     normalizeElement: function(elem) {
       if(typeof elem === 'string') {
-        elem = SP.DOM.getNode(elem);
+        elem = spTools.DOM.getNode(elem);
       }
-      if(SP.DOM.isDOMElement(elem)) {
+      if(spTools.DOM.isDOMElement(elem)) {
         return elem;
       } else return false;
     },
@@ -242,16 +242,16 @@
      * @returns {boolean} `true` if `elementRoot`
      */
     isFiredInside: function(eventPath, elementRoot) {
-      if(SP.DOM.isDOMElement(elementRoot) && eventPath && eventPath.length && eventPath.length > 0) {
+      if(spTools.DOM.isDOMElement(elementRoot) && eventPath && eventPath.length && eventPath.length > 0) {
         for(let curr in eventPath) {
-          if(eventPath.hasOwnProperty(curr) && SP.DOM.isDOMElement(eventPath[curr])) {
+          if(eventPath.hasOwnProperty(curr) && spTools.DOM.isDOMElement(eventPath[curr])) {
             if(eventPath[curr] == elementRoot) {
               return true;
             }
           }
         }
       } else {
-        console.warn('SP.DOM.isFiredInside: invalid data passed in attributes (evenPath, elementRoot)\n', eventPath, elementRoot);
+        console.warn('spTools.DOM.isFiredInside: invalid data passed in attributes (evenPath, elementRoot)\n', eventPath, elementRoot);
       }
       return false;
     },
@@ -262,7 +262,7 @@
         return (attrNode && attrNode.value ? attrNode.value : undefined);
       },
       set: function(name, value) {
-        let currentValue = SP.DOM.bodyAttribs.get(name);
+        let currentValue = spTools.DOM.bodyAttribs.get(name);
         if(!currentValue) {
           let newValueAttrib = document.createAttribute(name);
           newValueAttrib.value = value;
@@ -362,15 +362,15 @@
   /*** Registry ***/
   spTools.Registry = {
     get: function(name) {
-      if(SP.Object.isBasedOn(SP.__data.registry[name], 'Registry')) {
-        return SP.__data.registry[name];
+      if(spTools.Object.isBasedOn(spTools.__data.registry[name], 'Registry')) {
+        return spTools.__data.registry[name];
       }
     },
 
     set: function(name, object) {
       if(name && typeof name === 'string') {
         object = object || null;
-        SP.__data.registry[name] = object;
+        spTools.__data.registry[name] = object;
         return true;
       } else return false;
     }
