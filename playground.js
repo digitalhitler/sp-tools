@@ -17,10 +17,13 @@
 
 "use strict";
 
-let spTools = require('./src/index');
+let spTools = require('./v0.10.0/index');
+global.SP = new spTools();
+console.log(global.SP);
+debugger;
 console.log(` * SP-tools ${spTools.__spToolsVersion} loaded.`);
 console.dir(spTools);
 
 console.log("\n * Testing globalizing...");
-spTools.Globalize();
+SP.Globalize();
 console.log(SP.__spToolsVersion + " detected in global scope.");
